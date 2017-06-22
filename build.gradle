@@ -1,0 +1,155 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+
+repositories {
+    maven {
+        name "BASE"
+        url "http://blamejared.com/maven"
+    }
+    maven {
+        name "JEI"
+        url "http://dvs1.progwml6.com/files/maven"
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "${minecraft_version}-${mod_version}" + getBuildNumber()
+
+group = "xyz.brassgoggledcoders.modularutilities"
+archivesBaseName = "${mod_name}"
+
+minecraft {
+    version = "${minecraft_version}-${forge_version}"
+
+    mappings = "${mappings_version}"
+    runDir = "run/"
+    useDepAts = true
+
+    replace "@VERSION@", project.version
+    replaceIn "${mod_name}.java"
+
+    replace "base@[0.0.0,];", "base@[" + base_version + ",];"
+}
+
+dependencies {
+    deobfCompile "com.teamacronymcoders.base:base:${minecraft_version}-${base_version}"
+    deobfCompile "mezz.jei:jei_${minecraft_version}:${jei_version}"
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    classifier = ""
+}
+
+task deobfJar(type: Jar) {
+    from(sourceSets.main.output) {
+        classifier = "deobf"
+    }
+}
+
+artifacts {
+    archives deobfJar
+}
+
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
+task("uploadJars", dependsOn: "reobf") {
+    description = "uploads JARs"
+    if (System.getenv("bamboo_local_maven") != null || System.getenv("local_maven") != null) {
+        apply plugin: 'maven'
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    repository(url: "file://" + (System.getenv("local_maven") != null ? System.getenv("local_maven") : System.getenv("bamboo_local_maven")))
+                    pom {
+                        groupId = project.group
+                        version = project.version
+                        artifactId = project.archivesBaseName
+                        project {
+                            name project.archivesBaseName
+                            packaging 'jar'
+                            description 'ModularUtilities'
+                            url ''
+                            scm {
+                                url 'https://github.com/BrassGoggledCoders/${mod_name}'
+                                connection 'scm:git:git@github.com:BrassGoggledCoders/${mod_name}.git'
+                                developerConnection 'scm:git:git@github.com:BrassGoggledCoders/${mod_name}.git'
+                            }
+                            issueManagement {
+                                system 'github'
+                                url 'https://github.com/BrassGoggledCoders/${mod_name}/issues'
+                            }
+                            licenses {
+                                license {
+                                    name 'MIT'
+                                    url 'https://github.com/BrassGoggledCoders/ModularUtilities/blob/master/LICENSE'
+                                    distribution 'repo'
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id 'SkySom'
+                                    name 'SkySom'
+                                    roles { role 'developer' }
+                                }
+                                developer {
+                                    id 'warlordjones'
+                                    name 'warlordjones'
+                                    roles { role 'developer' }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+static String getBuildNumber() {
+    String buildNumber = System.getenv("BUILD_NUMBER") != null ? System.getenv("BUILD_NUMBER") : ""
+    if (buildNumber == "") {
+        buildNumber = System.getenv("bamboo_buildNumber") != null ? "." + System.getenv("bamboo_buildNumber") : ""
+    }
+    if (buildNumber != "") {
+        buildNumber = "-" + buildNumber
+    }
+    return buildNumber
+}
