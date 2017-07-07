@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-// TODO Require enchantment
+// TODO Require enchantment. Block meta.
 @Mod(modid = Discovery.MODID, name = Discovery.MODNAME, version = Discovery.MODVERSION,
 		dependencies = Discovery.DEPENDS)
 public class Discovery extends BaseModFoundation<Discovery> {

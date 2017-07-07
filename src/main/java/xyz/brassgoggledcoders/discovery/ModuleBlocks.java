@@ -35,12 +35,8 @@ public class ModuleBlocks extends ModuleBase {
 	public void preInit(FMLPreInitializationEvent event) {
 		File jsonConfig =
 				new File(this.getConfigRegistry().getConfigFolder().getPath() + File.separator + "blocks.json");
-		LootEntry test = new LootEntry("grass", "diamond:1:0", 100);
-		lootEntries.put("diamond_pick", new LootEntry[] {test});
 		try {
 			if(!jsonConfig.exists() && jsonConfig.createNewFile()) {
-				lootEntries.put(KEY_ANYTHING, new LootEntry[0]);
-				lootEntries.put(KEY_NOTHING, new LootEntry[0]);
 				String json = gson.toJson(lootEntries, new TypeToken<Map<String, LootEntry[]>>() {}.getType());
 				FileWriter writer = new FileWriter(jsonConfig);
 				writer.write(json);
@@ -59,20 +55,19 @@ public class ModuleBlocks extends ModuleBase {
 	}
 
 	public static class LootEntry {
-		public final String blockName;
+		public final String toolRep;
 		public final String lootRep;
 		public final int chance;
 
-		public LootEntry(String blockName, String lootRep, int chance) {
-			this.blockName = blockName;
-			// TODO BLOCK META
+		public LootEntry(String toolRep, String lootRep, int chance) {
+			this.toolRep = toolRep;
 			this.lootRep = lootRep;
 			this.chance = chance;
 		}
 
 		@Override
 		public String toString() {
-			return "BLOCK: " + blockName + " LOOT: " + lootRep + " CHANCE: " + chance;
+			return "TOOL: " + toolRep + " LOOT: " + lootRep + " CHANCE: " + chance;
 		}
 	}
 
