@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
+  "modid": "discovery",
+  "name": "Discovery",
+  "description": "Configurable additional drops for any block in the game",
+  "version": "@VERSION@",
+  "mcversion": "1.11.2",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["warlordjones"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
