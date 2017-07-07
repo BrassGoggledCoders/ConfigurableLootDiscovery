@@ -17,10 +17,12 @@ public class DiscoveryEventHandler {
 		if(ModuleBlocks.lootEntries.containsKey(blockName)) {
 			for(LootEntry entry : ModuleBlocks.lootEntries.get(blockName)) {
 				if(entry.toolRep.equals(ModuleBlocks.KEY_ANYTHING)) {
-					event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
+					if(event.getWorld().rand.nextInt(entry.chance) == 0)
+						event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
 				}
 				else if(entry.toolRep.equals(ModuleBlocks.KEY_NOTHING) && held == ItemStack.EMPTY) {
-					event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
+					if(event.getWorld().rand.nextInt(entry.chance) == 0)
+						event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
 				}
 				else {
 					String itemName = held.getItem().getRegistryName().getResourcePath();
@@ -28,10 +30,12 @@ public class DiscoveryEventHandler {
 					// Discovery.instance.getLogger().devInfo(Arrays.toString(item));
 					if(item[0].equals(itemName)) {
 						if(item.length == 1 || item[1].equals("*")) {
-							event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
+							if(event.getWorld().rand.nextInt(entry.chance) == 0)
+								event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
 						}
 						else if(Integer.valueOf(item[1]) == held.getMetadata()) {
-							event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
+							if(event.getWorld().rand.nextInt(entry.chance) == 0)
+								event.getDrops().add(ModuleBlocks.getStackFromStringRepresentation(entry.lootRep));
 						}
 					}
 				}
