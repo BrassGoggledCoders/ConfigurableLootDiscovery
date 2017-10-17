@@ -3,6 +3,7 @@ package xyz.brassgoggledcoders.discovery;
 import java.io.*;
 import java.util.*;
 
+import com.google.common.collect.Maps;
 import com.google.gson.reflect.TypeToken;
 import com.teamacronymcoders.base.modulesystem.Module;
 import com.teamacronymcoders.base.modulesystem.ModuleBase;
@@ -14,12 +15,14 @@ import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import xyz.brassgoggledcoders.discovery.Discovery.LootEntry;
 
 @Module(Discovery.MODID)
 @EventBusSubscriber(modid = Discovery.MODID)
 public class ModuleBlocks extends ModuleBase {
 
 	public static Map<String, Discovery.LootEntry[]> lootEntries = new HashMap<String, Discovery.LootEntry[]>();
+	public static Map<String, String[]> removalEntries = Maps.newHashMap();
 
 	@Override
 	public String getName() {
@@ -28,10 +31,14 @@ public class ModuleBlocks extends ModuleBase {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
-		File jsonConfig = new File(getConfigRegistry().getConfigFolder().getPath() + File.separator + "blocks.json");
-		getConfigRegistry().addEntry(new ConfigEntry("general", "enableBlockExamples", Type.BOOLEAN, "false",
+		File jsonConfig = new File(
+				this.getConfigRegistry().getConfigFolder().getPath() + File.separator + "blocks.json");
+		File jsonRemovalConfig = new File(
+				this.getConfigRegistry().getConfigFolder().getPath() + File.separator + "blocks_remove.json");
+
+		this.getConfigRegistry().addEntry(new ConfigEntry("general", "enableExamples", Type.BOOLEAN, "false",
 				"Delete or rename blocks.json after enabling"));
-		if(getConfigRegistry().getBoolean("enableBlockExamples", false)) {
+		if(getConfigRegistry().getBoolean("enableExamples", false)) {
 			lootEntries.put("dirt",
 					new Discovery.LootEntry[] { new Discovery.LootEntry(Discovery.KEY_NOTHING, "stick", 100),
 							new Discovery.LootEntry("diamond_pickaxe", "diamond", 100) });
@@ -45,8 +52,15 @@ public class ModuleBlocks extends ModuleBase {
 				writer.close();
 			}
 			lootEntries = Discovery.gson.fromJson(new FileReader(jsonConfig),
-					new TypeToken<Map<String, Discovery.LootEntry[]>>() {
+					new TypeToken<Map<String, LootEntry[]>>() {
 					}.getType());
+			if(!jsonRemovalConfig.exists() && jsonRemovalConfig.createNewFile()) {
+				String json = Discovery.gson.toJson(removalEntries, new TypeToken<Map<String, String[]>>() {
+				}.getType());
+				FileWriter writer = new FileWriter(jsonRemovalConfig);
+				writer.write(json);
+				writer.close();
+			}
 		}
 		catch(IOException e) {
 			getLogger().error("Error creating default configuration.");
