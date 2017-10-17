@@ -29,13 +29,13 @@ repositories {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${minecraft_version}-${mod_version}" + getBuildNumber()
+version = "${minecraft_version}-${mod_version}"
 
-group = "xyz.brassgoggledcoders.modularutilities"
+group = "xyz.brassgoggledcoders.discovery"
 archivesBaseName = "${mod_name}"
 
 minecraft {
-    version = "${minecraft_version}-${forge_version}"
+    version = "${forge_version}"
 
     mappings = "${mappings_version}"
     runDir = "run/"
@@ -48,8 +48,7 @@ minecraft {
 }
 
 dependencies {
-    deobfCompile "com.teamacronymcoders.base:base:${minecraft_version}-${base_version}"
-    deobfCompile "mezz.jei:jei_${minecraft_version}:${jei_version}"
+    deobfCompile "com.teamacronymcoders.base:base:${base_version}"
 }
 
 sourceCompatibility = 1.7
