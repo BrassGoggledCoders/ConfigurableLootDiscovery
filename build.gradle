@@ -12,14 +12,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
 repositories {
     maven {
         name "BASE"
-        url "http://blamejared.com/maven"
+        url "http://maven.blamejared.com"
     }
     maven {
         name "JEI"
